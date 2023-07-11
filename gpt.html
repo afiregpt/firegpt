@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FireGPT</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.45/vue.global.js"></script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/element-plus/2.2.28/index.css" rel="stylesheet" />
+
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.5/axios.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/element-plus/2.2.28/index.full.js"></script>
+
+
+</head>
+
+<body>
+
+  <div id="hello-vue">
+
+    <el-container>
+      <el-header>
+        <h1>FireGPT（内部测试人员版本）</h1>
+		<p>Version: FG-BTA-0.1a</p>
+		<p>由于本网站需访问 api.openai.com ，可能回复时间较长，如长时间（10分钟）未回复，请联系客服修复！</p>
+		<br></br>
+      </el-header>
+      <el-main>
+        <el-row :gutter="40">
+          <el-col :span="8" class="col-params" v-loading="loading" element-loading-text="Loading..."
+            :element-loading-spinner="svg" element-loading-svg-view-box="-10, -10, 50, 50"
+            element-loading-background="rgba(122, 122, 122, 0.8)">
+		<br></br>	
+		<br></br>
+            <el-button size="large" type="success" @click="submitForm">发送</el-button>
+            <h2>参数配置</h2>
+            <el-form>
+              <h4>API Key</h4>
+              <el-input v-model="key" placeholder="API KEY" show-password type="password"></el-input>
+              <h4>输入内容</h4>
+              <el-input type="textarea" v-model="prompt" placeholder="输入内容！" rows="10"></el-input>
+
+              <h4>Tokens (注意！Token使用量越大，API KEY余额消耗越大！)</h4>
+
+              <el-input-number type="number" v-model="max_tokens"></el-input-number>
+              <h4>Temperature</h4>
+              <div class="slider-block">
+                <span class="slider-laber">温度（注意！越大想象力越丰富！）</span>
+                <el-slider v-model="temperature" :step="0.1" :min="0" :max="1" show-input />
+              </div>
+              <h4>Top_p</h4>
+              <div class="slider-block">
+                <span class="slider-laber">Top_p</span>
+                <el-slider v-model="top_p" :step="0.1" :min="0" :max="1" show-input />
+              </div>
+              <h4>Frequency_penalty</h4>
+              <div class="slider-block">
+                <span class="slider-laber">Frequency_penalty</span>
+                <el-slider v-model="frequency_penalty" :step="0.1" :min="-2" :max="2" show-input />
+              </div>
+              <h4>Presence_penalty</h4>
+              <div class="slider-block">
+                <span class="slider-laber">Presence_penalty</span>
+                <el-slider v-model="presence_penalty" :step="0.1" :min="-2" :max="2" show-input />
+              </div>
+              <h4>模型 （根据您的API KEY选择，建议使用 “text-davinci-003”！）</h4>
+
+		<el-select v-model="model" class="m-2" placeholder="Model" size="large">
+                <el-option v-for="item in models" :key="item.value" :label="item.label" :value="item.value">{{
+                  item
+                  }}</el-option>
+              </el-select>
+            </el-form>
+            <p>微信客服：<span style="color: red">hpjy_Jushen<span></p>
+	    <p>QQ 客服：<span style="color: red">3394242040</span></p>
+	    <p>Copyright @2023 Starsky Technology</p>
+	    <p>All rights reserved!</p>
+              
+
+
+	  <br></br>
+	  <br></br>
+          </el-col>
+          <el-col :span="16">
+	  <br></br>
+	  <br></br>
+            <el-button size="large" type="warning" @click="downloadTxt" :disabled="download_disable">保存（测试中，可能无法使用！）</el-button>
+            <h2>输出端</h2>
+
+            <p id="result" style="color:red;white-space: pre-wrap;">{{ response }}</p>
+          </el-col>
+        </el-row>
+      </el-main>
+    </el-container>
+  </div>
+
+  <script>
+    const HelloVueApp = {
+      data() {
+        return {
+          loading: false,
+          key: '',
+          prompt: '',
+          temperature: 1,
+          top_p: 1,
+          max_tokens: 2048,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+          stop: ["Human:", "AI:"],
+          model: 'text-davinci-003',
+          models: ['text-davinci-003', 'text-davinci-002', 'text-curie-001'],
+          response: '',
+          download_disable: true
+        }
+      },
+      watch: {
+        response(resp) {
+          if (resp == '') {
+            this.download_disable = true;
+          } else {
+            this.download_disable = false;
+          }
+        }
+      },
+      methods: {
+        downloadTxt() {
+          let text = 'Prompt: ' + this.prompt + '\n' + document.getElementById('result').innerText;
+          let element = document.createElement("a");
+          let file = new Blob([text], { type: 'text/plain' });
+          element.href = URL.createObjectURL(file);
+          element.download = "download.txt";
+          element.click();
+        },
+        submitForm() {
+          let data = {
+            prompt: this.prompt,
+            temperature: this.temperature,
+            top_p: this.top_p,
+            model: this.model,
+            max_tokens: this.max_tokens,
+            frequency_penalty: this.frequency_penalty,
+            presence_penalty: this.presence_penalty,
+            stop: this.stop
+          }
+          this.loading = true
+          axios.post('https://api.openai.com/v1/completions', data, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ` + this.key,
+            }
+          })
+            .then(response => {
+              this.loading = false
+              this.response = response.data.choices[0].text;
+              console.log(this.response)
+            })
+            .catch(error => {
+              this.loading = false
+              console.log(error);
+            });
+        }
+      }
+    }
+
+    Vue.createApp(HelloVueApp).use(ElementPlus).mount('#hello-vue')
+  </script>
+</body>
+
+</html>

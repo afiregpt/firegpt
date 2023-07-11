@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" name="viewpoint" content="">
+		<title>login</title>
+	</head>
+	
+	<style>
+		body{
+			background-image:url("img/background.jpg");
+			background-size:cover;
+			background-repeat:no-repeat;
+			background-attachment:fixed;
+		}
+		.div1{
+			width: 610px;
+			height: 580px;
+			background-color: white;
+			margin: 0 auto;
+			border-radius: 30px;
+			opacity: 0.7;
+		}
+		.div2{
+			text-align: center;
+		}
+		
+	</style>
+	
+	<body>
+		<div class="div1">
+			<div class="div2">
+				<form>
+					<h1 style="color: blue">欢迎使用 FireGPT 准测试登录系统</h1>
+					<br></br>
+					准测试证号：<input type="text" name="username" id="username" placeholder="请输入准测试证号码！" />
+					<br></br>
+					<br></br>
+					<button type="button" onclick="loGin()">登录</button>
+					<button><a href="login.html">管理员登录</a></button>
+					<br></br>
+					<br></br>
+					<br></br>
+					<br></br>
+					<p>Copyright @2023 Starsky Technology</p>
+					<p>All rights reserved!</p>
+					<p>Version: <span style="color: red">FG-BTA-LGN 1.0</span></p>
+					<br></br>
+
+					<p>请确保您的电脑浏览器已开启 JAVASCRIPT 许可！</p>
+					
+				</form>
+			</div>
+		</div>
+		<script type="text/javascript">
+			
+			function loGin(){
+				var username = document.getElementById("username").value
+				if (username=="237401"){
+					window.location.href="gpt.html";
+				}
+				else{
+					alert("ERROR: Failed connecting to GPT-SQL Server!")
+				}
+			}
+		</script>
+	
+	
+	</body>
+	
+</html>

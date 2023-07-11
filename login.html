@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" name="viewpoint" content="">
+		<title>admin</title>
+	</head>
+	<body>
+		<form>
+  			<h1>login</h1>
+			管理员码：<input type="text" id="username" name="username" placeholder="请输入管理员码！" />
+			<br></br>
+			<button type="button" onclick="loGin()">登录</button>
+			<p>Copyright @2023 Starsky Technology</p>
+			<p>All rights reserved!</p>
+		</form>
+		<script type="text/javascript">
+			
+			function loGin(){
+				var username = document.getElementById("username").value
+				if (username=="1a2b$#572"){
+					window.location.href="admin.html";
+				}
+				else{
+					alert("ERROR: Failed connecting to SQL Server!")
+				}
+			}
+		</script>
+	</body>
+</html>
+		
+		
